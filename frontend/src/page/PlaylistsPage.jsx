@@ -59,20 +59,20 @@ const PlaylistsPage = () => {
   return (
     <div className="w-full max-w-6xl mx-auto mt-14 px-4 pb-20 relative">
       {/* Background blurs */}
-      <div className="absolute top-16 left-0 w-1/3 h-1/3 bg-primary/10 opacity-30 blur-3xl rounded-md pointer-events-none"></div>
+      <div className="absolute top-16 left-0 w-80 h-80 bg-indigo-600/10 opacity-30 blur-[100px] rounded-full pointer-events-none -z-10"></div>
       
       {/* Header */}
-      <div className="flex justify-between items-center mb-10 pb-4 border-b border-base-300 relative z-10">
+      <div className="flex justify-between items-center mb-10 pb-6 border-b border-gray-800/80 relative z-10">
         <div>
           <h2 className="text-3xl font-extrabold text-white flex items-center gap-3">
-            <FolderHeart className="size-8 text-primary" />
+            <FolderHeart className="size-8 text-indigo-400" />
             My Playlists
           </h2>
-          <p className="text-neutral-400 text-sm mt-1">Organize and manage lists of coding problems for study focus.</p>
+          <p className="text-gray-400 text-sm mt-1">Organize and manage lists of coding problems for study focus.</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="btn btn-primary gap-2 rounded-xl text-white font-bold cursor-pointer"
+          className="btn bg-indigo-600 hover:bg-indigo-500 border-none gap-2 rounded-xl text-white font-bold cursor-pointer transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-indigo-600/10"
         >
           <Plus className="size-4" />
           Create Playlist
@@ -90,8 +90,8 @@ const PlaylistsPage = () => {
             return (
               <div 
                 key={playlist.id} 
-                className={`card bg-base-200 border border-base-300 shadow-xl rounded-2xl overflow-hidden transition-all duration-200 h-fit ${
-                  isExpanded ? "md:col-span-2 lg:col-span-3 border-primary/40 ring-1 ring-primary/20" : "hover:border-neutral-700"
+                className={`card bg-gray-800/80 border border-gray-700/50 shadow-2xl rounded-2xl overflow-hidden transition-all duration-200 h-fit hover:scale-[1.01] ${
+                  isExpanded ? "md:col-span-2 lg:col-span-3 border-indigo-500/40 ring-1 ring-indigo-500/20" : "hover:border-gray-600/50"
                 }`}
               >
                 {/* Playlist Summary Card Body */}
@@ -101,31 +101,31 @@ const PlaylistsPage = () => {
                 >
                   <div>
                     <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors pr-2">
+                      <h3 className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors pr-2">
                         {playlist.name}
                       </h3>
-                      <span className="badge badge-sm badge-outline shrink-0 font-semibold px-2 py-2 text-[10px]">
+                      <span className="badge badge-sm bg-gray-700 text-gray-300 border-gray-600 shrink-0 font-semibold px-2 py-2 text-[10px]">
                         {problemCount} {problemCount === 1 ? "problem" : "problems"}
                       </span>
                     </div>
 
-                    <p className="text-xs text-neutral-400 font-medium line-clamp-3 mb-6">
+                    <p className="text-xs text-gray-400 font-medium line-clamp-3 mb-6">
                       {playlist.description || "No description provided."}
                     </p>
                   </div>
 
-                  <div className="flex justify-between items-center border-t border-neutral-800/40 pt-4 mt-2">
+                  <div className="flex justify-between items-center border-t border-gray-700/30 pt-4 mt-2">
                     <button
-                      className="text-xs font-bold text-neutral-400 flex items-center gap-1 hover:text-white transition-colors"
+                      className="text-xs font-bold text-gray-400 flex items-center gap-1 hover:text-white transition-colors"
                     >
                       {isExpanded ? (
                         <>
-                          <ChevronUp className="size-4 text-primary" />
+                          <ChevronUp className="size-4 text-indigo-400" />
                           Hide Problems
                         </>
                       ) : (
                         <>
-                          <ChevronDown className="size-4 text-primary" />
+                          <ChevronDown className="size-4 text-indigo-400" />
                           View Problems
                         </>
                       )}
@@ -133,7 +133,7 @@ const PlaylistsPage = () => {
 
                     <button
                       onClick={(e) => handleDeletePlaylist(e, playlist.id)}
-                      className="btn btn-ghost btn-xs text-error hover:bg-error/10 rounded-md p-1"
+                      className="btn btn-ghost btn-xs text-rose-400 hover:bg-rose-500/10 rounded-md p-1 transition-colors duration-150"
                       title="Delete Playlist"
                     >
                       <Trash2 className="size-4" />
@@ -143,17 +143,17 @@ const PlaylistsPage = () => {
 
                 {/* Playlist Detail (List of problems) */}
                 {isExpanded && (
-                  <div className="bg-base-300/30 border-t border-base-300 p-6 animate-in fade-in duration-300">
+                  <div className="bg-gray-900/40 border-t border-gray-700/50 p-6 animate-in fade-in duration-300">
                     <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
-                      <BookOpen className="size-4 text-primary" />
+                      <BookOpen className="size-4 text-indigo-400" />
                       Problems List ({problemCount})
                     </h4>
                     
                     {problemCount > 0 ? (
-                      <div className="overflow-x-auto rounded-xl">
-                        <table className="table table-zebra table-md w-full bg-base-300/50">
+                      <div className="overflow-x-auto rounded-xl border border-gray-700/30">
+                        <table className="table table-md w-full bg-gray-900/20 text-gray-200">
                           <thead>
-                            <tr className="bg-base-300">
+                            <tr className="bg-gray-900 text-gray-400 border-b border-gray-700/50">
                               <th>Title</th>
                               <th>Difficulty</th>
                               <th>Actions</th>
@@ -163,11 +163,11 @@ const PlaylistsPage = () => {
                             {problemRelations.map(({ problem }) => {
                               if (!problem) return null;
                               return (
-                                <tr key={problem.id} className="hover:bg-base-300/80 transition-colors">
+                                <tr key={problem.id} className="hover:bg-gray-800/40 border-b border-gray-800/80 transition-colors duration-150">
                                   <td className="font-semibold text-white">
                                     <Link 
                                       to={`/problem/${problem.id}`}
-                                      className="flex items-center gap-2 hover:text-primary hover:underline"
+                                      className="flex items-center gap-2 hover:text-indigo-400 transition-colors"
                                     >
                                       <Link2 className="size-3.5" />
                                       {problem.title}
@@ -175,12 +175,12 @@ const PlaylistsPage = () => {
                                   </td>
                                   <td>
                                     <span 
-                                      className={`badge badge-sm font-bold text-white ${
+                                      className={`badge badge-sm font-bold border ${
                                         problem.difficulty === "EASY"
-                                          ? "badge-success"
+                                          ? "text-emerald-400 bg-emerald-400/10 border-emerald-500/20"
                                           : problem.difficulty === "MEDIUM"
-                                          ? "badge-warning"
-                                          : "badge-error"
+                                          ? "text-amber-400 bg-amber-400/10 border-amber-500/20"
+                                          : "text-rose-400 bg-rose-400/10 border-rose-500/20"
                                       }`}
                                     >
                                       {problem.difficulty}
@@ -189,7 +189,7 @@ const PlaylistsPage = () => {
                                   <td>
                                     <button
                                       onClick={(e) => handleRemoveProblem(e, playlist.id, problem.id)}
-                                      className="btn btn-xs btn-error btn-outline font-bold rounded-md"
+                                      className="btn btn-xs bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-600 hover:text-white transition-all duration-200 rounded-lg font-bold px-3 py-1.5 h-auto min-h-0"
                                     >
                                       Remove
                                     </button>

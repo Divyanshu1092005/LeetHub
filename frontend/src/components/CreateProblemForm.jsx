@@ -15,8 +15,8 @@ import {
 import Editor from "@monaco-editor/react";
 import { useState } from 'react';
 import { axiosInstance } from "../lib/axios"
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useProblemStore } from "../store/useProblemStore";
 
 const problemSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -50,16 +50,23 @@ const problemSchema = z.object({
       output: z.string().min(1, "Output is required"),
       explanation: z.string().optional(),
     }),
+    "C++": z.object({
+      input: z.string().optional(),
+      output: z.string().optional(),
+      explanation: z.string().optional(),
+    }).optional(),
   }),
   codeSnippets: z.object({
     JAVASCRIPT: z.string().min(1, "JavaScript code snippet is required"),
     PYTHON: z.string().min(1, "Python code snippet is required"),
     JAVA: z.string().min(1, "Java solution is required"),
+    "C++": z.string().optional(),
   }),
   referenceSolutions: z.object({
     JAVASCRIPT: z.string().min(1, "JavaScript solution is required"),
     PYTHON: z.string().min(1, "Python solution is required"),
     JAVA: z.string().min(1, "Java solution is required"),
+    "C++": z.string().optional(),
   }),
 });
 
@@ -515,6 +522,10 @@ public class Main {
 };
 
 const CreateProblemForm = () => {
+  const { id } = useParams();
+  const isEditMode = !!id;
+  const { fetchProblemById, updateProblem } = useProblemStore();
+
   const [sampleType, setSampleType] = useState("DP")
   const navigation = useNavigate();
   const { register, control, handleSubmit, reset, formState: { errors } } = useForm(
@@ -527,16 +538,19 @@ const CreateProblemForm = () => {
           JAVASCRIPT: { input: "", output: "", explanation: "" },
           PYTHON: { input: "", output: "", explanation: "" },
           JAVA: { input: "", output: "", explanation: "" },
+          "C++": { input: "", output: "", explanation: "" },
         },
         codeSnippets: {
           JAVASCRIPT: "function solution() {\n  // Write your code here\n}",
           PYTHON: "def solution():\n    # Write your code here\n    pass",
           JAVA: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}",
+          "C++": "#include <iostream>\nusing namespace std;\n\nint solution() {\n    // Write your code here\n    return 0;\n}",
         },
         referenceSolutions: {
           JAVASCRIPT: "// Add your reference solution here",
           PYTHON: "# Add your reference solution here",
           JAVA: "// Add your reference solution here",
+          "C++": "// Add your reference solution here",
         },
       }
     }
@@ -564,17 +578,54 @@ const CreateProblemForm = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  // Pre-populate form fields when in edit mode
+  React.useEffect(() => {
+    if (isEditMode) {
+      const loadProblemData = async () => {
+        try {
+          setIsLoading(true);
+          const problemData = await fetchProblemById(id);
+          if (problemData) {
+            reset({
+              title: problemData.title,
+              description: problemData.description,
+              difficulty: problemData.difficulty,
+              tags: problemData.tags,
+              constraints: problemData.constraints,
+              hints: problemData.hints || "",
+              editorial: problemData.editorial || "",
+              testcases: problemData.testcases,
+              examples: problemData.examples,
+              codeSnippets: problemData.codeSnippets,
+              referenceSolutions: problemData.referenceSolutions,
+            });
+            replaceTags(problemData.tags);
+            replacetestcases(problemData.testcases);
+          }
+        } catch (error) {
+          console.error("Failed to load problem data:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadProblemData();
+    }
+  }, [id, isEditMode, reset, replaceTags, replacetestcases]);
+
   const onSubmit = async (value) => {
     try {
       setIsLoading(true)
-      const res = await axiosInstance.post("/problems/create-problem", value)
-      console.log(res.data);
-      toast.success(res.data.message || "Problem Created successfully⚡");
-      navigation("/");
-
+      if (isEditMode) {
+        await updateProblem(id, value);
+        navigation("/problems");
+      } else {
+        const res = await axiosInstance.post("/problems/create-problem", value)
+        console.log(res.data);
+        toast.success(res.data.message || "Problem Created successfully⚡");
+        navigation("/problems");
+      }
     } catch (error) {
       console.log(error);
-      toast.error("Error creating problem")
     }
     finally {
       setIsLoading(false);
@@ -592,43 +643,49 @@ const CreateProblemForm = () => {
   }
 
   return (
-    <div className='container mx-auto py-8 px-4 max-w-7xl'>
-      <div className="card bg-base-100 shadow-xl">
-        <div className="card-body p-6 md:p-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 pb-4 border-b">
-            <h2 className="card-title text-2xl md:text-3xl flex items-center gap-3">
+    <div className='container mx-auto py-8 px-4 max-w-7xl relative min-h-screen'>
+      {/* Background glowing decorations */}
+      <div className="absolute top-10 left-1/4 w-80 h-80 bg-indigo-500/10 rounded-full blur-[110px] pointer-events-none -z-10" />
+      <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-[110px] pointer-events-none -z-10" />
+      
+      <div className="card bg-gray-800/70 border border-gray-700/50 backdrop-blur-xl shadow-2xl rounded-2xl">
+        <div className="card-body p-6 md:p-8 text-gray-200">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 pb-6 border-b border-gray-700/50">
+            <h2 className="card-title text-2xl md:text-3xl flex items-center gap-3 text-white font-extrabold">
               <FileText className="w-6 h-6 md:w-8 md:h-8 text-primary" />
-              Create Problem
+              {isEditMode ? "Edit Problem" : "Create Problem"}
             </h2>
 
-            <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
-              <div className="join">
+            {!isEditMode && (
+              <div className="flex flex-col md:flex-row gap-3 mt-4 md:mt-0">
+                <div className="join">
+                  <button
+                    type="button"
+                    className={`btn join-item ${sampleType === "DP" ? "btn-active" : ""
+                      }`}
+                    onClick={() => setSampleType("array")}
+                  >
+                    DP Problem
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn join-item ${sampleType === "string" ? "btn-active" : ""
+                      }`}
+                    onClick={() => setSampleType("string")}
+                  >
+                    String Problem
+                  </button>
+                </div>
                 <button
                   type="button"
-                  className={`btn join-item ${sampleType === "DP" ? "btn-active" : ""
-                    }`}
-                  onClick={() => setSampleType("array")}
+                  className="btn btn-secondary gap-2"
+                  onClick={loadSampleData}
                 >
-                  DP Problem
-                </button>
-                <button
-                  type="button"
-                  className={`btn join-item ${sampleType === "string" ? "btn-active" : ""
-                    }`}
-                  onClick={() => setSampleType("string")}
-                >
-                  String Problem
+                  <Download className="w-4 h-4" />
+                  Load Sample
                 </button>
               </div>
-              <button
-                type="button"
-                className="btn btn-secondary gap-2"
-                onClick={loadSampleData}
-              >
-                <Download className="w-4 h-4" />
-                Load Sample
-              </button>
-            </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
@@ -830,7 +887,7 @@ const CreateProblemForm = () => {
 
             {/* Code Editor Sections */}
             <div className="space-y-8">
-              {["JAVASCRIPT", "PYTHON", "JAVA"].map((language) => (
+              {["JAVASCRIPT", "PYTHON", "JAVA", "C++"].map((language) => (
                 <div
                   key={language}
                   className="card bg-base-200 p-4 md:p-6 shadow-md"
@@ -1037,13 +1094,13 @@ const CreateProblemForm = () => {
             </div>
 
             <div className="card-actions justify-end pt-4 border-t">
-              <button type="submit" className="btn btn-primary btn-lg gap-2">
+              <button type="submit" className="btn btn-primary btn-lg gap-2" disabled={isLoading}>
                 {isLoading ? (
                   <span className="loading loading-spinner text-white"></span>
                 ) : (
                   <>
                     <CheckCircle2 className="w-5 h-5" />
-                    Create Problem
+                    {isEditMode ? "Update Problem" : "Create Problem"}
                   </>
                 )}
               </button>

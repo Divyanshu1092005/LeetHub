@@ -77,6 +77,10 @@ const App = () => {
             path="/add-problem"
             element={authUser ? <AddProblem /> : <Navigate to="/" />}
           />
+          <Route
+            path="/admin/edit-problem/:id"
+            element={authUser ? <AddProblem /> : <Navigate to="/" />}
+          />
         </Route>
       </Routes>
     </div>

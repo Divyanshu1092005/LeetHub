@@ -1,6 +1,6 @@
 # LeetLab - Project Context
 
-LeetLab is a self-hosted platform inspired by LeetCode, designed to help users prepare for coding interviews and improve their programming skills. It supports user authentication, code execution in multiple languages (JavaScript, Java, Python) via a sandbox environment, and admin CRUD capabilities for programming problems.
+LeetLab is a self-hosted platform inspired by LeetCode, designed to help users prepare for coding interviews and improve their programming skills. It supports user authentication, code execution in multiple languages (JavaScript, Java, Python, C++) via a sandbox environment, and admin CRUD capabilities for programming problems.
 
 ---
 
@@ -135,7 +135,7 @@ erDiagram
    - Relationship: Linked to the creator `User` (on-delete cascade).
 
 3. **Submission**
-   - Tracks a code submission: `userId`, `problemId`, `sourceCode` (JSON), `language` (e.g. Python, Javascript, Java), status outputs (`stdin`, `stdout`, `stderr`, `compileOutput`, `status`, `memory`, `time`).
+   - Tracks a code submission: `userId`, `problemId`, `sourceCode` (JSON), `language` (e.g. Python, Javascript, Java, C++), status outputs (`stdin`, `stdout`, `stderr`, `compileOutput`, `status`, `memory`, `time`).
 
 4. **TestCaseResult**
    - Result for individual test case execution inside a submission: `submissionId`, `testCase` index, `passed` (boolean), `stdout`, `expected`, `stderr`, `status`, `memory`, and `time`.
@@ -158,11 +158,11 @@ erDiagram
 - **Admin utilities**: Admins see contextual buttons to delete problems or navigate to the edit layout.
 - Save to playlist button allows users to queue questions to custom playlists.
 
-### 2. Create Problem (`AddProblem` / `CreateProblemForm`)
+### 2. Create and Update Problem (`AddProblem` / `CreateProblemForm`)
 - An admin-only feature guarded by `AdminRoute` and `checkAdmin` middleware.
 - Full Monaco-editor integration for writing standard boilerplates (`codeSnippets`) and code solutions (`referenceSolutions`).
-- **Judge0 Verification on Create**: When saving a new problem, the backend compiles and tests the submitted `referenceSolutions` against all custom `testcases` using Judge0. The problem is only persisted if the reference solutions compile and pass all test runs successfully.
-- Includes a "Load Sample" helper that pre-populates form data with predefined arrays/string sample configurations (e.g. *Climbing Stairs*, *Valid Palindrome*).
+- **Judge0 Verification on Create / Update**: When saving or updating a problem, the backend compiles and tests the submitted `referenceSolutions` against all custom `testcases` using Judge0. The problem is only persisted/updated if the reference solutions compile and pass all test runs successfully.
+- Includes a "Load Sample" helper that pre-populates form data with predefined arrays/string sample configurations (e.g. *Climbing Stairs*, *Valid Palindrome*). Enabled only on creation to avoid overwriting edits.
 
 ### 3. Delete Problem
 - Admins can delete problems directly from the problems table.
@@ -171,6 +171,8 @@ erDiagram
 ### 4. Sandbox Code Execution and Submission (Pending details)
 - Allows users to code directly on the platform and run tests before final submission.
 - Real-time communication with Judge0 execution nodes.
+- **Monaco Auto-Formatting**: Fully integrated document formatting edit provider for C++ using custom brace-indentation and access-specifier styling, triggered silently via standard Shift + Alt + F shortcut or Monaco's editor context menu.
+- **Syntax Highlighting**: Custom inline mappings ensure selected C++ configurations load Monaco's native `"cpp"` color themes.
 
 ### 5. User Profile Section
 - **Profile Endpoint (`/api/v1/profile`)**: Provides a unified payload containing user stats (total solved and system totals by difficulty), the 20 most recent submissions, and playlists with problem counts.

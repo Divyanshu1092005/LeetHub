@@ -24,6 +24,53 @@ import { useSubmissionStore } from "../store/useSubmissionStore";
 import Submission from "../components/Submission";
 import SubmissionsList from "../components/SubmissionList";
 
+export function formatCppCode(code) {
+  const lines = code.split("\n");
+  let indentLevel = 0;
+  const indentString = "    "; // 4 spaces
+  const formattedLines = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (trimmed === "") {
+      formattedLines.push("");
+      continue;
+    }
+
+    // Preprocessor directives always start at column 0
+    if (trimmed.startsWith("#")) {
+      formattedLines.push(trimmed);
+      continue;
+    }
+
+    // Decrease indentation level if current line starts with a closing brace
+    if (trimmed.startsWith("}") || trimmed.startsWith("]")) {
+      indentLevel = Math.max(0, indentLevel - 1);
+    }
+
+    // Access specifiers (public:, private:, protected:) outdented to half-level
+    const isAccessSpecifier = /^(public|private|protected)\s*:/.test(trimmed);
+    const indentToApply = isAccessSpecifier ? Math.max(0, indentLevel - 0.5) : indentLevel;
+
+    // Apply indentation
+    const indent = Number.isInteger(indentToApply) 
+      ? indentString.repeat(indentToApply) 
+      : indentString.repeat(Math.floor(indentToApply)) + "  ";
+      
+    formattedLines.push(indent + trimmed);
+
+    // Update indentation for the next line
+    const openBraces = (trimmed.match(/[\{\[]/g) || []).length;
+    const closeBraces = (trimmed.match(/[\}\]]/g) || []).length;
+    indentLevel += (openBraces - closeBraces);
+    indentLevel = Math.max(0, indentLevel);
+  }
+
+  return formattedLines.join("\n");
+}
+
 const ProblemPage = () => {
   const { id } = useParams();
   const { getProblemById, problem, isProblemLoading } = useProblemStore();
@@ -37,8 +84,27 @@ const ProblemPage = () => {
   } = useSubmissionStore();
 
   const [code, setCode] = useState("");
+
+  const handleEditorDidMount = (editor, monaco) => {
+    // Register C++ formatting provider once
+    const cppLang = monaco.languages.getLanguages().find(l => l.id === "cpp");
+    if (cppLang && !cppLang._hasFormatter) {
+      monaco.languages.registerDocumentFormattingEditProvider("cpp", {
+        provideDocumentFormattingEdits(model, options, token) {
+          const formatted = formatCppCode(model.getValue());
+          return [
+            {
+              range: model.getFullModelRange(),
+              text: formatted,
+            },
+          ];
+        },
+      });
+      cppLang._hasFormatter = true;
+    }
+  };
   const [activeTab, setActiveTab] = useState("description");
-  const [selectedLanguage, setSelectedLanguage] = useState("javascript");
+  const [selectedLanguage, setSelectedLanguage] = useState("C++");
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
@@ -51,8 +117,22 @@ const ProblemPage = () => {
 
   useEffect(() => {
     if (problem) {
+      const snippets = problem.codeSnippets || {};
+      const keys = Object.keys(snippets);
+      let matchedKey = keys.find(
+        (key) => key.toLowerCase() === selectedLanguage.toLowerCase()
+      );
+
+      if (!matchedKey && keys.length > 0) {
+        // Fallback to the first available language if C++ is not in the schema definitions
+        matchedKey = keys[0];
+        setSelectedLanguage(matchedKey);
+      } else if (!matchedKey) {
+        matchedKey = selectedLanguage;
+      }
+
       setCode(
-        problem.codeSnippets?.[selectedLanguage] || submission?.sourceCode || ""
+        snippets[matchedKey] || submission?.sourceCode || ""
       );
       setTestCases(
         problem.testcases?.map((tc) => ({
@@ -308,10 +388,11 @@ const ProblemPage = () => {
               <div className="h-[600px] w-full">
                 <Editor
                   height="100%"
-                  language={selectedLanguage.toLowerCase()}
+                  language={selectedLanguage === "C++" || selectedLanguage === "CPP" ? "cpp" : selectedLanguage.toLowerCase()}
                   theme="vs-dark"
                   value={code}
                   onChange={(value) => setCode(value || "")}
+                  onMount={handleEditorDidMount}
                   options={{
                     minimap: { enabled: false },
                     fontSize: 20,

@@ -147,11 +147,88 @@ export const getProblemById = async (req, res) => {
   }
 };
 
-// TODO: IMPLEMENT BY YOUR SELF🔥
 export const updateProblem = async (req, res) => {
-  // id
-  // id--->problem ( condition)
-  // baaki kaam same as create
+  const { id } = req.params;
+  const {
+    title,
+    description,
+    difficulty,
+    tags,
+    examples,
+    constraints,
+    hints,
+    editorial,
+    testcases,
+    codeSnippets,
+    referenceSolutions,
+  } = req.body;
+
+  try {
+    const problem = await db.problem.findUnique({ where: { id } });
+    if (!problem) {
+      return res.status(404).json({ error: "Problem not found" });
+    }
+
+    // Validate the updated reference solutions against updated test cases via Judge0
+    for (const [language, solutionCode] of Object.entries(referenceSolutions)) {
+      const languageId = getJudge0LanguageId(language);
+
+      if (!languageId) {
+        return res
+          .status(400)
+          .json({ error: `Language ${language} is not supported` });
+      }
+
+      const submissions = testcases.map(({ input, output }) => ({
+        source_code: solutionCode,
+        language_id: languageId,
+        stdin: input,
+        expected_output: output.trim(),
+      }));
+
+      const submissionResults = await submitBatch(submissions);
+      const tokens = submissionResults.map((res) => res.token);
+      const results = await pollBatchResults(tokens);
+
+      for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        if (result.status.id !== 3) {
+          return res.status(400).json({
+            error: `Testcase ${i + 1} failed for language ${language} during update verification.`,
+          });
+        }
+      }
+    }
+
+    const updatedProblem = await db.problem.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        difficulty,
+        tags,
+        examples,
+        constraints,
+        hints,
+        editorial,
+        testcases,
+        codeSnippets,
+        referenceSolutions,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      sucess: true,
+      message: "Problem Updated Successfully",
+      problem: updatedProblem,
+    });
+  } catch (error) {
+    console.error("Update problem controller error:", error);
+    return res.status(500).json({
+      error: "Error While Updating Problem",
+    });
+  }
 };
 
 export const deleteProblem = async (req, res) => {

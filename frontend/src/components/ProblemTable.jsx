@@ -69,12 +69,12 @@ const ProblemsTable = ({ problems }) => {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto mt-10">
+    <div className="w-full max-w-6xl mx-auto mt-10 px-4">
       {/* Header with Create Playlist Button */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Problems</h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-3xl font-extrabold text-white">Problems</h2>
         <button
-          className="btn btn-primary gap-2"
+          className="btn bg-indigo-600 hover:bg-indigo-500 text-white font-bold border-none gap-2 rounded-xl transition-all duration-200 hover:scale-[1.02] shadow-lg shadow-indigo-600/10"
           onClick={() => setIsCreateModalOpen(true)}
         >
           <Plus className="w-4 h-4" />
@@ -83,16 +83,16 @@ const ProblemsTable = ({ problems }) => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+      <div className="flex flex-wrap items-center mb-8 gap-4">
         <input
           type="text"
-          placeholder="Search by title"
-          className="input input-bordered w-full md:w-1/3 bg-base-200"
+          placeholder="Search by title..."
+          className="input input-bordered w-full md:w-1/3 bg-gray-800 border-gray-700 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all duration-200 rounded-xl"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <select
-          className="select select-bordered bg-base-200"
+          className="select select-bordered bg-gray-800 border-gray-700 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all duration-200 rounded-xl"
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
         >
@@ -104,7 +104,7 @@ const ProblemsTable = ({ problems }) => {
           ))}
         </select>
         <select
-          className="select select-bordered bg-base-200"
+          className="select select-bordered bg-gray-800 border-gray-700 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all duration-200 rounded-xl"
           value={selectedTag}
           onChange={(e) => setSelectedTag(e.target.value)}
         >
@@ -118,44 +118,44 @@ const ProblemsTable = ({ problems }) => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl shadow-md">
-        <table className="table table-zebra table-lg bg-base-200 text-base-content">
-          <thead className="bg-base-300">
+      <div className="overflow-x-auto rounded-2xl border border-gray-700/50 shadow-2xl bg-gray-850">
+        <table className="table table-lg text-gray-200 w-full">
+          <thead className="bg-gray-900/60 text-gray-400 border-b border-gray-700/50">
             <tr>
-              <th>Solved</th>
-              <th>Title</th>
-              <th>Tags</th>
-              <th>Difficulty</th>
-              <th>Actions</th>
+              <th className="font-semibold text-sm">Solved</th>
+              <th className="font-semibold text-sm">Title</th>
+              <th className="font-semibold text-sm">Tags</th>
+              <th className="font-semibold text-sm">Difficulty</th>
+              <th className="font-semibold text-sm">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-gray-900/20">
             {paginatedProblems.length > 0 ? (
               paginatedProblems.map((problem) => {
                 const isSolved = problem.solvedBy.some(
                   (user) => user.userId === authUser?.id
                 );
                 return (
-                  <tr key={problem.id}>
+                  <tr key={problem.id} className="border-b border-gray-800/80 hover:bg-gray-800/40 transition-colors duration-150">
                     <td>
                       <input
                         type="checkbox"
                         checked={isSolved}
                         readOnly
-                        className="checkbox checkbox-sm"
+                        className="checkbox checkbox-sm checkbox-primary border-gray-600 focus:ring-offset-0 focus:ring-0"
                       />
                     </td>
                     <td>
-                      <Link to={`/problem/${problem.id}`} className="font-semibold hover:underline">
+                      <Link to={`/problem/${problem.id}`} className="font-semibold text-white hover:text-indigo-400 transition-colors duration-150">
                         {problem.title}
                       </Link>
                     </td>
                     <td>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-1.5">
                         {(problem.tags || []).map((tag, idx) => (
                           <span
                             key={idx}
-                            className="badge badge-outline badge-warning text-xs font-bold"
+                            className="bg-gray-800 text-gray-400 border border-gray-700/50 text-xs px-2.5 py-1 rounded-lg font-medium"
                           >
                             {tag}
                           </span>
@@ -164,12 +164,12 @@ const ProblemsTable = ({ problems }) => {
                     </td>
                     <td>
                       <span
-                        className={`badge font-semibold text-xs text-white ${
+                        className={`badge font-bold text-xs px-2.5 py-1.5 rounded-lg border ${
                           problem.difficulty === "EASY"
-                            ? "badge-success"
+                            ? "text-emerald-400 bg-emerald-400/10 border-emerald-500/20"
                             : problem.difficulty === "MEDIUM"
-                            ? "badge-warning"
-                            : "badge-error"
+                            ? "text-amber-400 bg-amber-400/10 border-amber-500/20"
+                            : "text-rose-400 bg-rose-400/10 border-rose-500/20"
                         }`}
                       >
                         {problem.difficulty}
@@ -181,17 +181,20 @@ const ProblemsTable = ({ problems }) => {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleDelete(problem.id)}
-                              className="btn btn-sm btn-error"
+                              className="btn btn-sm bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-505 hover:bg-rose-600 hover:text-white transition-all duration-200 rounded-lg"
                             >
-                              <TrashIcon className="w-4 h-4 text-white" />
+                              <TrashIcon className="w-4 h-4" />
                             </button>
-                            <button disabled className="btn btn-sm btn-warning">
-                              <PencilIcon className="w-4 h-4 text-white" />
-                            </button>
+                            <Link 
+                              to={`/admin/edit-problem/${problem.id}`} 
+                              className="btn btn-sm bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-600 hover:text-white transition-all duration-200 rounded-lg"
+                            >
+                              <PencilIcon className="w-4 h-4" />
+                            </Link>
                           </div>
                         )}
                         <button
-                          className="btn btn-sm btn-outline flex gap-2 items-center"
+                          className="btn btn-sm btn-outline border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-200 rounded-lg flex gap-2 items-center"
                           onClick={() => handleAddToPlaylist(problem.id)}
                         >
                           <Bookmark className="w-4 h-4" />

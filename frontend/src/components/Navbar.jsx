@@ -11,25 +11,25 @@ const Navbar = () => {
   console.log("AUTH_USER", authUser)
 
   return (
-    <nav className="sticky top-0 z-50 w-full py-5">
-      <div className="flex w-full justify-between items-center mx-auto max-w-4xl bg-black/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-gray-200/10 p-4 rounded-2xl">
+    <nav className="sticky top-0 z-50 w-full bg-gray-900/80 backdrop-blur-md border-b border-gray-800/80 px-6 py-4">
+      <div className="flex w-full justify-between items-center mx-auto max-w-7xl">
         {/* Logo Section */}
-        <Link to="/" className="flex items-center gap-3 cursor-pointer shrink-0">
-          <img src="/leetlab.svg" className="h-12 w-12 bg-primary/20 text-primary border-none p-1 rounded-full" />
-          <span className="text-lg md:text-2xl font-bold tracking-tight text-white hidden md:block">
+        <Link to="/" className="flex items-center gap-3 cursor-pointer shrink-0 transition-transform duration-200 hover:scale-[1.02]">
+          <img src="/leetlab.svg" className="h-10 w-10 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 p-1 rounded-xl" />
+          <span className="text-xl font-bold tracking-tight text-white hidden md:block">
             Leetlab
           </span>
         </Link>
 
         {/* Center Tabs */}
-        <div className="flex items-center gap-1 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-4">
           <NavLink
             to="/home"
             className={({ isActive }) =>
-              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-2.5 py-1.5 rounded-xl cursor-pointer ${
+              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${
                 isActive
-                  ? "text-primary bg-primary/10 border-b border-primary/20"
-                  : "text-neutral-400 hover:text-white hover:bg-neutral-800/30"
+                  ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
+                  : "text-gray-400 hover:text-white hover:bg-gray-800/50"
               }`
             }
           >
@@ -38,10 +38,10 @@ const Navbar = () => {
           <NavLink
             to="/problems"
             className={({ isActive }) =>
-              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-2.5 py-1.5 rounded-xl cursor-pointer ${
+              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${
                 isActive
-                  ? "text-primary bg-primary/10 border-b border-primary/20"
-                  : "text-neutral-400 hover:text-white hover:bg-neutral-800/30"
+                  ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
+                  : "text-gray-400 hover:text-white hover:bg-gray-800/50"
               }`
             }
           >
@@ -50,10 +50,10 @@ const Navbar = () => {
           <NavLink
             to="/playlists"
             className={({ isActive }) =>
-              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-2.5 py-1.5 rounded-xl cursor-pointer ${
+              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${
                 isActive
-                  ? "text-primary bg-primary/10 border-b border-primary/20"
-                  : "text-neutral-400 hover:text-white hover:bg-neutral-800/30"
+                  ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
+                  : "text-gray-400 hover:text-white hover:bg-gray-800/50"
               }`
             }
           >
@@ -82,24 +82,19 @@ const Navbar = () => {
             </label>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 space-y-3"
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-2xl bg-gray-800 border border-gray-700/50 rounded-box w-52 space-y-2 text-gray-200"
             >
-              {/* Admin Option */}
-
-
               {/* Common Options */}
               <li>
-                <p className="text-base font-semibold">
-
+                <p className="text-base font-semibold text-white">
                   {authUser?.name}
-
                 </p>
-                <hr className="border-gray-200/10" />
+                <hr className="border-gray-700/50" />
               </li>
               <li>
                 <Link
                   to="/profile"
-                  className="hover:bg-primary hover:text-white text-base font-semibold"
+                  className="hover:bg-indigo-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl"
                 >
                   <User className="w-4 h-4 mr-2" />
                   My Profile
@@ -109,7 +104,7 @@ const Navbar = () => {
                 <li>
                   <Link
                     to="/add-problem"
-                    className="hover:bg-primary hover:text-white text-base font-semibold"
+                    className="hover:bg-indigo-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl"
                   >
                     <Code className="w-4 h-4 mr-1" />
                     Add Problem
@@ -117,7 +112,7 @@ const Navbar = () => {
                 </li>
               )}
               <li>
-                <LogoutButton className="hover:bg-primary hover:text-white">
+                <LogoutButton className="hover:bg-red-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl">
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </LogoutButton>
