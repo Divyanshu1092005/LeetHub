@@ -37,7 +37,7 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route
             index
-            element={<Navigate to="/home" replace />}
+            element={<Navigate to="/login" replace />}
           />
           <Route
             path="/home"
