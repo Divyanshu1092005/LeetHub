@@ -620,7 +620,6 @@ const CreateProblemForm = () => {
         navigation("/problems");
       } else {
         const res = await axiosInstance.post("/problems/create-problem", value)
-        console.log(res.data);
         toast.success(res.data.message || "Problem Created successfully⚡");
         navigation("/problems");
       }

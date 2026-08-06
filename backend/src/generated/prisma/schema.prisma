@@ -64,6 +64,7 @@ model Problem {
   submission        Submission[]
   solvedBy          ProblemSolved[]
   problemsPlaylists ProblemInPlaylist[]
+  testCases         TestCase[]
 }
 
 // enum Status{
@@ -155,4 +156,16 @@ model ProblemInPlaylist {
   problem  Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
   @@unique([playListId, problemId])
+}
+
+model TestCase {
+  id        String   @id @default(uuid())
+  problemId String
+  input     String
+  output    String
+  isHidden  Boolean  @default(false) @map("is_hidden")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
 }

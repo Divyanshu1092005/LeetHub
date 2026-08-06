@@ -8,13 +8,11 @@ const Navbar = () => {
 
   const { authUser } = useAuthStore()
 
-  console.log("AUTH_USER", authUser)
-
   return (
     <nav className="sticky top-0 z-50 w-full bg-gray-900/80 backdrop-blur-md border-b border-gray-800/80 px-6 py-4">
       <div className="flex w-full justify-between items-center mx-auto max-w-7xl">
         {/* Logo Section */}
-        <Link to="/" className="flex items-center gap-3 cursor-pointer shrink-0 transition-transform duration-200 hover:scale-[1.02]">
+        <Link to="/home" className="flex items-center gap-3 cursor-pointer shrink-0 transition-transform duration-200 hover:scale-[1.02]">
           <img src="/leetlab.svg" className="h-10 w-10 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 p-1 rounded-xl" />
           <span className="text-xl font-bold tracking-tight text-white hidden md:block">
             Leetlab

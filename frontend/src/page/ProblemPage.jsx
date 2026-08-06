@@ -108,7 +108,7 @@ const ProblemPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
-  const { executeCode, submission, isExecuting } = useExecutionStore();
+  const { runCode, submitCode, submission, isRunning, isSubmitting } = useExecutionStore();
 
   useEffect(() => {
     getProblemById(id);
@@ -161,11 +161,19 @@ const ProblemPage = () => {
     e.preventDefault();
     try {
       const language_id = getLanguageId(selectedLanguage);
-      const stdin = problem.testcases.map((tc) => tc.input);
-      const expected_outputs = problem.testcases.map((tc) => tc.output);
-      executeCode(code, language_id, stdin, expected_outputs, id);
+      runCode(code, language_id, id);
     } catch (error) {
-      console.log("Error executing code", error);
+      console.log("Error running code", error);
+    }
+  };
+
+  const handleSubmitCode = (e) => {
+    e.preventDefault();
+    try {
+      const language_id = getLanguageId(selectedLanguage);
+      submitCode(code, language_id, id);
+    } catch (error) {
+      console.log("Error submitting code", error);
     }
   };
 
@@ -409,15 +417,22 @@ const ProblemPage = () => {
                 <div className="flex justify-between items-center">
                   <button
                     className={`btn btn-primary gap-2 ${
-                      isExecuting ? "loading" : ""
+                      isRunning ? "loading" : ""
                     }`}
                     onClick={handleRunCode}
-                    disabled={isExecuting}
+                    disabled={isRunning || isSubmitting}
                   >
-                    {!isExecuting && <Play className="w-4 h-4" />}
+                    {!isRunning && <Play className="w-4 h-4" />}
                     Run Code
                   </button>
-                  <button className="btn btn-success gap-2">
+                  <button
+                    className={`btn btn-success gap-2 ${
+                      isSubmitting ? "loading" : ""
+                    }`}
+                    onClick={handleSubmitCode}
+                    disabled={isRunning || isSubmitting}
+                  >
+                    {!isSubmitting && <Play className="w-4 h-4" />}
                     Submit Solution
                   </button>
                 </div>

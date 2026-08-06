@@ -37,7 +37,7 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route
             index
-            element={<Navigate to="/login" replace />}
+            element={<Navigate to="/home" replace />}
           />
           <Route
             path="/home"
@@ -59,12 +59,12 @@ const App = () => {
 
         <Route
           path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
+          element={!authUser ? <LoginPage /> : <Navigate to={"/home"} />}
         />
 
         <Route
           path="/signup"
-          element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
+          element={!authUser ? <SignUpPage /> : <Navigate to={"/home"} />}
         />
 
         <Route
