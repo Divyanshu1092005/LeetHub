@@ -45,7 +45,7 @@ const LandingPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-24 relative">
         <div className="lg:col-span-6 space-y-6">
           <div className="flex items-center gap-2">
-            <span className="badge badge-outline badge-primary font-bold text-xs px-2.5 py-1">UPCOMING FEATURE</span>
+            <span className="badge badge-outline badge-primary font-bold text-xs px-2.5 py-1">NEW FEATURE</span>
             <span className="badge badge-warning font-extrabold text-[10px] px-1.5 py-0.5">PRO</span>
           </div>
           

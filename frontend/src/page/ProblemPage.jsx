@@ -24,6 +24,10 @@ import { useSubmissionStore } from "../store/useSubmissionStore";
 import RunResultsView from "../components/RunResultsView";
 import SubmitSummaryView from "../components/SubmitSummaryView";
 import SubmissionsList from "../components/SubmissionList";
+import LeetAIFloatingBot from "../components/LeetAIFloatingBot";
+import LeetAIModal from "../components/LeetAIModal";
+import { axiosInstance } from "../lib/axios";
+import toast from "react-hot-toast";
 
 export function formatCppCode(code) {
   const lines = code.split("\n");
@@ -86,8 +90,6 @@ const ProblemPage = () => {
     addSubmission,
   } = useSubmissionStore();
 
-  const [code, setCode] = useState("");
-
   const handleEditorDidMount = (editor, monaco) => {
     // Register C++ formatting provider once
     const cppLang = monaco.languages.getLanguages().find(l => l.id === "cpp");
@@ -108,8 +110,15 @@ const ProblemPage = () => {
   };
   const [activeTab, setActiveTab] = useState("description");
   const [selectedLanguage, setSelectedLanguage] = useState("C++");
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [code, setCode] = useState("");
   const [testcases, setTestCases] = useState([]);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  // LeetAI Assistant States
+  const [showAIBot, setShowAIBot] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [aiFeedback, setAiFeedback] = useState("");
+  const [isAILoading, setIsAILoading] = useState(false);
 
   const {
     runCode,
@@ -203,8 +212,36 @@ const ProblemPage = () => {
         addSubmission(resSubmission);
         getSubmissionCountForProblem(id);
       }
+      setShowAIBot(true);
     } catch (error) {
       console.log("Error submitting code", error);
+    }
+  };
+
+  const handleAskAI = async () => {
+    setIsAIModalOpen(true);
+    setIsAILoading(true);
+    try {
+      const isSuccessful = submission?.status === "Accepted";
+      const res = await axiosInstance.post("/ai/analyze", {
+        problemTitle: problem.title,
+        problemDescription: problem.description,
+        userCode: code,
+        isSuccessful,
+      });
+
+      if (res.data?.success) {
+        setAiFeedback(res.data.feedback);
+      } else {
+        toast.error(res.data?.message || "Failed to generate AI feedback.");
+      }
+    } catch (error) {
+      console.error("Error asking AI for feedback:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to fetch AI feedback. Try again."
+      );
+    } finally {
+      setIsAILoading(false);
     }
   };
 
@@ -509,6 +546,20 @@ const ProblemPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating LeetAI Assistant Trigger & Drawer Modal */}
+      <LeetAIFloatingBot
+        isVisible={showAIBot}
+        onClick={handleAskAI}
+        onDismiss={() => setShowAIBot(false)}
+      />
+
+      <LeetAIModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        isLoading={isAILoading}
+        feedback={aiFeedback}
+      />
     </div>
   );
 };
