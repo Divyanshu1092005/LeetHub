@@ -21,7 +21,8 @@ import { useProblemStore } from "../store/useProblemStore";
 import { getLanguageId } from "../lib/lang";
 import { useExecutionStore } from "../store/useExecutionStore";
 import { useSubmissionStore } from "../store/useSubmissionStore";
-import Submission from "../components/Submission";
+import RunResultsView from "../components/RunResultsView";
+import SubmitSummaryView from "../components/SubmitSummaryView";
 import SubmissionsList from "../components/SubmissionList";
 
 export function formatCppCode(code) {
@@ -81,6 +82,7 @@ const ProblemPage = () => {
     getSubmissionForProblem,
     getSubmissionCountForProblem,
     submissionCount,
+    addSubmission,
   } = useSubmissionStore();
 
   const [code, setCode] = useState("");
@@ -108,7 +110,15 @@ const ProblemPage = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [testcases, setTestCases] = useState([]);
 
-  const { runCode, submitCode, submission, isRunning, isSubmitting } = useExecutionStore();
+  const {
+    runCode,
+    submitCode,
+    submission,
+    runResults,
+    activeOutputView,
+    isRunning,
+    isSubmitting,
+  } = useExecutionStore();
 
   useEffect(() => {
     getProblemById(id);
@@ -167,11 +177,15 @@ const ProblemPage = () => {
     }
   };
 
-  const handleSubmitCode = (e) => {
+  const handleSubmitCode = async (e) => {
     e.preventDefault();
     try {
       const language_id = getLanguageId(selectedLanguage);
-      submitCode(code, language_id, id);
+      const resSubmission = await submitCode(code, language_id, id);
+      if (resSubmission) {
+        addSubmission(resSubmission);
+        getSubmissionCountForProblem(id);
+      }
     } catch (error) {
       console.log("Error submitting code", error);
     }
@@ -443,8 +457,10 @@ const ProblemPage = () => {
 
         <div className="card bg-base-100 shadow-xl mt-6">
           <div className="card-body">
-            {submission ? (
-              <Submission submission={submission} />
+            {activeOutputView === "run" && runResults ? (
+              <RunResultsView runResults={runResults} />
+            ) : activeOutputView === "submit" && submission ? (
+              <SubmitSummaryView submission={submission} />
             ) : (
               <>
                 <div className="flex items-center justify-between mb-6">

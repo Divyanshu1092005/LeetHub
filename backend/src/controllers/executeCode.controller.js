@@ -208,6 +208,7 @@ export const runCode = async (req, res) => {
       return {
         testCase: i + 1,
         passed,
+        input: testCases[i].input,
         stdout,
         expected: expected_output,
         stderr: result.stderr || null,
@@ -284,6 +285,7 @@ export const submitCode = async (req, res) => {
       return {
         testCase: i + 1,
         passed,
+        input: testCases[i].input,
         stdout,
         expected: expected_output,
         stderr: result.stderr || null,
@@ -366,7 +368,10 @@ export const submitCode = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: allPassed ? "All test cases passed!" : "Some test cases failed.",
-      submission: submissionWithTestCase,
+      submission: {
+        ...submissionWithTestCase,
+        testCases: detailedResults,
+      },
     });
   } catch (error) {
     console.error("Error submitting code:", error.message);

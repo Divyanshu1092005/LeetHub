@@ -8,6 +8,13 @@ export const useSubmissionStore = create((set, get) => ({
   submission: null,
   submissionCount: null,
 
+  addSubmission: (newSubmission) => {
+    set((state) => ({
+      submission: [newSubmission, ...(Array.isArray(state.submission) ? state.submission : [])],
+      submissionCount: (state.submissionCount || 0) + 1,
+    }));
+  },
+
   getAllSubmissions: async () => {
     try {
       set({ isLoading: true });

@@ -9,7 +9,7 @@ const Navbar = () => {
   const { authUser } = useAuthStore()
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-gray-900/80 backdrop-blur-md border-b border-gray-800/80 px-6 py-4">
+    <nav className="sticky top-0 z-50 w-full h-[64px] min-h-[64px] max-h-[64px] shrink-0 bg-gray-900/90 backdrop-blur-md border-b border-gray-800/80 px-6 flex items-center">
       <div className="flex w-full justify-between items-center mx-auto max-w-7xl">
         {/* Logo Section */}
         <Link to="/home" className="flex items-center gap-3 cursor-pointer shrink-0 transition-transform duration-200 hover:scale-[1.02]">
@@ -98,30 +98,32 @@ const Navbar = () => {
                   My Profile
                 </Link>
               </li>
+
+              {/* Admin-Only Options */}
               {authUser?.role === "ADMIN" && (
-                <li>
-                  <Link
-                    to="/add-problem"
-                    className="hover:bg-indigo-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl"
-                  >
-                    <Code className="w-4 h-4 mr-1" />
-                    Add Problem
-                  </Link>
-                </li>
+                <>
+                  <li>
+                    <Link
+                      to="/add-problem"
+                      className="hover:bg-indigo-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl"
+                    >
+                      <Code className="w-4 h-4 mr-2" />
+                      Add Problem
+                    </Link>
+                  </li>
+                </>
               )}
+
+              {/* Logout Button */}
               <li>
-                <LogoutButton className="hover:bg-red-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl">
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </LogoutButton>
+                <LogoutButton className="hover:bg-indigo-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl" />
               </li>
             </ul>
           </div>
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-
-export default Navbar;
+export default React.memo(Navbar);

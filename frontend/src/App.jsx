@@ -31,7 +31,7 @@ const App = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start ">
+    <div className="flex flex-col h-screen w-full overflow-hidden">
       <Toaster />
       <Routes>
         <Route path="/" element={<Layout />}>
