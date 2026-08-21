@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
 
 
-const LogoutButton = ({children})=>{
+const LogoutButton = ({children, className})=>{
     const {logout} = useAuthStore()
     const navigate = useNavigate()
 
@@ -15,7 +15,7 @@ const LogoutButton = ({children})=>{
 
 
     return (
-        <button className="btn btn-primary" onClick={onLogout}> 
+        <button className={className || "btn btn-primary"} onClick={onLogout}> 
             {children}
         </button>
     )

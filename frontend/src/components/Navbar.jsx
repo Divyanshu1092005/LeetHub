@@ -116,7 +116,10 @@ const Navbar = () => {
 
               {/* Logout Button */}
               <li>
-                <LogoutButton className="hover:bg-indigo-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl" />
+                <LogoutButton className="hover:bg-indigo-600 hover:text-white text-base font-semibold transition-colors duration-150 rounded-xl">
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </LogoutButton>
               </li>
             </ul>
           </div>
