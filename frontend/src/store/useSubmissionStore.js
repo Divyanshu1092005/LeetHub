@@ -7,12 +7,22 @@ export const useSubmissionStore = create((set, get) => ({
   submissions: [],
   submission: null,
   submissionCount: null,
+  successRate: null,
 
   addSubmission: (newSubmission) => {
-    set((state) => ({
-      submission: [newSubmission, ...(Array.isArray(state.submission) ? state.submission : [])],
-      submissionCount: (state.submissionCount || 0) + 1,
-    }));
+    set((state) => {
+      const current = Array.isArray(state.submission) ? state.submission : [];
+      const updated = [newSubmission, ...current];
+      const accepted = updated.filter((s) => s.status === "Accepted").length;
+      const total = updated.length;
+      const newSuccessRate = total > 0 ? Math.round((accepted / total) * 100) : 0;
+
+      return {
+        submission: updated,
+        submissionCount: total,
+        successRate: newSuccessRate,
+      };
+    });
   },
 
   getAllSubmissions: async () => {
@@ -57,7 +67,10 @@ export const useSubmissionStore = create((set, get) => ({
         `/submission/get-submissions-count/${problemId}`
       );                
 
-      set({ submissionCount: res.data.count });
+      set({ 
+        submissionCount: res.data.count,
+        successRate: res.data.successRate
+      });
     } catch (error) {
       console.log("Error getting submission count for problem", error);
       toast.error("Error getting submission count for problem");

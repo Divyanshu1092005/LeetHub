@@ -82,6 +82,7 @@ const ProblemPage = () => {
     getSubmissionForProblem,
     getSubmissionCountForProblem,
     submissionCount,
+    successRate,
     addSubmission,
   } = useSubmissionStore();
 
@@ -129,20 +130,36 @@ const ProblemPage = () => {
     if (problem) {
       const snippets = problem.codeSnippets || {};
       const keys = Object.keys(snippets);
-      let matchedKey = keys.find(
-        (key) => key.toLowerCase() === selectedLanguage.toLowerCase()
-      );
+      let matchedKey = keys.find((key) => {
+        const k = key.toLowerCase();
+        const sel = selectedLanguage.toLowerCase();
+        if ((k === "cpp" || k === "c++") && (sel === "cpp" || sel === "c++")) {
+          return true;
+        }
+        return k === sel;
+      });
 
-      if (!matchedKey && keys.length > 0) {
-        // Fallback to the first available language if C++ is not in the schema definitions
+      if (matchedKey) {
+        if (selectedLanguage !== matchedKey) {
+          setSelectedLanguage(matchedKey);
+        }
+      } else if (keys.length > 0) {
         matchedKey = keys[0];
         setSelectedLanguage(matchedKey);
-      } else if (!matchedKey) {
+      } else {
         matchedKey = selectedLanguage;
       }
 
+      const latestSubForLang = Array.isArray(submissions) ? submissions.find(
+        (s) => getLanguageId(s.language) === getLanguageId(selectedLanguage)
+      ) : null;
+      
+      const currentSubmission = submission && getLanguageId(submission.language) === getLanguageId(selectedLanguage)
+        ? submission
+        : latestSubForLang;
+
       setCode(
-        snippets[matchedKey] || submission?.sourceCode || ""
+        currentSubmission?.sourceCode || snippets[matchedKey] || ""
       );
       setTestCases(
         problem.testcases?.map((tc) => ({
@@ -319,10 +336,10 @@ const ProblemPage = () => {
                 </span>
                 <span className="text-base-content/30">•</span>
                 <Users className="w-4 h-4" />
-                <span>{submissionCount} Submissions</span>
+                <span>{submissionCount !== null ? submissionCount : 0} Submissions</span>
                 <span className="text-base-content/30">•</span>
                 <ThumbsUp className="w-4 h-4" />
-                <span>95% Success Rate</span>
+                <span>{successRate !== null ? `${successRate}%` : "0%"} Success Rate</span>
               </div>
             </div>
           </div>

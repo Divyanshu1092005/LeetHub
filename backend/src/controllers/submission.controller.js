@@ -55,16 +55,29 @@ export const getSubmissionsForProblem = async (req , res)=>{
 export const getAllTheSubmissionsForProblem = async (req , res)=>{
     try {
         const problemId = req.params.problemId;
-        const submission = await db.submission.count({
+        
+        const totalSubmissions = await db.submission.count({
             where:{
                 problemId:problemId
             }
-        })
+        });
+
+        const acceptedSubmissions = await db.submission.count({
+            where:{
+                problemId:problemId,
+                status: "Accepted"
+            }
+        });
+
+        const successRate = totalSubmissions > 0
+            ? Math.round((acceptedSubmissions / totalSubmissions) * 100)
+            : 0;
 
         res.status(200).json({
             success:true,
             message:"Submissions Fetched successfully",
-            count:submission
+            count:totalSubmissions,
+            successRate
         })
     } catch (error) {
         console.error("Fetch Submissions Error:", error);
