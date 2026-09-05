@@ -20,11 +20,11 @@ const LandingPage = () => {
         <span className="badge badge-primary font-semibold tracking-wide text-xs px-3 py-1.5 mb-6 uppercase shadow-md shadow-primary/25">
           Elevate Your Preparation
         </span>
-        
+
         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-white via-slate-100 to-primary bg-clip-text text-transparent">
           Master the algorithms.<br />Crush the interview.
         </h1>
-        
+
         <p className="text-lg md:text-xl text-neutral-400 font-medium mb-10 max-w-2xl leading-relaxed">
           Your ultimate <span className="text-primary font-semibold">CodingMate</span> for algorithmic mastery. Build collections, verify code sandboxes, and level up your software engineering career.
         </p>
@@ -48,12 +48,12 @@ const LandingPage = () => {
             <span className="badge badge-outline badge-primary font-bold text-xs px-2.5 py-1">NEW FEATURE</span>
             <span className="badge badge-warning font-extrabold text-[10px] px-1.5 py-0.5">PRO</span>
           </div>
-          
+
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white flex items-center gap-3">
             <Sparkles className="text-warning size-7 animate-pulse" />
             AI Interview Coach
           </h2>
-          
+
           <p className="text-neutral-400 leading-relaxed font-medium">
             Take the guesswork out of optimizations. After submitting code, our integrated AI Coach automatically breaks down your logic, highlights bottleneck statements, computes time/space complexity, and leads an interactive discussion simulated like a real FAANG interview.
           </p>
@@ -88,14 +88,14 @@ const LandingPage = () => {
           >
             {/* Top Border Highlight Glow */}
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-            
+
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-neutral-800 pb-3 mb-4">
               <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shadow-inner">
                 🤖
               </div>
               <div>
-                <h4 className="font-bold text-sm text-white">LeetLab AI Assistant</h4>
+                <h4 className="font-bold text-sm text-white">LeetHub AI Assistant</h4>
                 <p className="text-[10px] text-success font-medium flex items-center gap-1">
                   <span className="size-1.5 rounded-full bg-success animate-ping"></span> Online
                 </p>

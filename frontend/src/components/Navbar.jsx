@@ -15,7 +15,7 @@ const Navbar = () => {
         <Link to="/home" className="flex items-center gap-3 cursor-pointer shrink-0 transition-transform duration-200 hover:scale-[1.02]">
           <img src="/leetlab.svg" className="h-10 w-10 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 p-1 rounded-xl" />
           <span className="text-xl font-bold tracking-tight text-white hidden md:block">
-            Leetlab
+            LeetHub
           </span>
         </Link>
 
@@ -24,10 +24,9 @@ const Navbar = () => {
           <NavLink
             to="/home"
             className={({ isActive }) =>
-              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${
-                isActive
-                  ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
-                  : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${isActive
+                ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
+                : "text-gray-400 hover:text-white hover:bg-gray-800/50"
               }`
             }
           >
@@ -36,10 +35,9 @@ const Navbar = () => {
           <NavLink
             to="/problems"
             className={({ isActive }) =>
-              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${
-                isActive
-                  ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
-                  : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${isActive
+                ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
+                : "text-gray-400 hover:text-white hover:bg-gray-800/50"
               }`
             }
           >
@@ -48,10 +46,9 @@ const Navbar = () => {
           <NavLink
             to="/playlists"
             className={({ isActive }) =>
-              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${
-                isActive
-                  ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
-                  : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+              `text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 px-3.5 py-2 rounded-xl cursor-pointer ${isActive
+                ? "text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
+                : "text-gray-400 hover:text-white hover:bg-gray-800/50"
               }`
             }
           >
