@@ -30,25 +30,34 @@ export const submitBatch = async (submissions) => {
 }
 
 export const pollBatchResults = async (tokens) => {
+    // Allow Judge0 time to process submissions before first poll
+    await sleep(2000);
+
+    // Ensure tokens are normalized to a comma-separated string
+    const tokensArray = Array.isArray(tokens)
+        ? tokens.map((item) => (typeof item === "object" && item !== null ? item.token : item)).filter(Boolean)
+        : [tokens];
+    const tokensString = tokensArray.join(",");
+
     while(true) {
         const { data } = await axios.get(
             `${process.env.JUDGE0_API_URL}/submissions/batch`,
             {
                 params: {
-                    tokens: tokens.join(","),
+                    tokens: tokensString,
                     base64_encoded: false,
                 },
                 headers: getHeaders()
             }
-        )
+        );
 
-        const results = data.submissions
-        const isAllDone = results.every(
+        const results = data?.submissions || [];
+        const isAllDone = results.length > 0 && results.every(
             (r) => r.status.id !== 1 && r.status.id !== 2
-        )
+        );
 
-        if(isAllDone) return results
-        await sleep(1000)
+        if(isAllDone) return results;
+        await sleep(1000);
     }
 }
 

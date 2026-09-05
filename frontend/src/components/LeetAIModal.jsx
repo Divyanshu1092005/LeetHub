@@ -114,8 +114,10 @@ const LeetAIModal = ({ isOpen, onClose, isLoading, feedback }) => {
                           {...props}
                         />
                       ),
-                      p: ({ node, ...props }) => (
-                        <p className="text-slate-300 text-sm leading-relaxed font-normal my-2.5" {...props} />
+                      p: ({ node, children, ...props }) => (
+                        <div className="text-slate-300 text-sm leading-relaxed font-normal my-2.5" {...props}>
+                          {children}
+                        </div>
                       ),
                       ul: ({ node, ...props }) => (
                         <ul className="list-disc list-inside space-y-1.5 text-sm text-slate-300 my-2" {...props} />
@@ -126,8 +128,22 @@ const LeetAIModal = ({ isOpen, onClose, isLoading, feedback }) => {
                       li: ({ node, ...props }) => (
                         <li className="text-slate-300 text-sm leading-relaxed" {...props} />
                       ),
+                      pre: ({ node, children, ...props }) => (
+                        <div className="my-4 rounded-xl overflow-hidden border border-slate-800 bg-slate-900/90 shadow-lg">
+                          <div className="flex items-center justify-between px-4 py-1.5 bg-slate-800/80 border-b border-slate-700/50 text-[11px] font-mono text-slate-400">
+                            <span className="flex items-center gap-1.5">
+                              <Code2 className="w-3.5 h-3.5 text-indigo-400" />
+                              Code / Pseudocode
+                            </span>
+                          </div>
+                          <pre className="p-4 text-xs font-mono text-emerald-300 overflow-x-auto leading-relaxed" {...props}>
+                            {children}
+                          </pre>
+                        </div>
+                      ),
                       code: ({ node, inline, className, children, ...props }) => {
-                        return inline ? (
+                        const isInline = inline || (!className && !String(children).includes("\n"));
+                        return isInline ? (
                           <code
                             className="bg-indigo-950/80 text-indigo-300 px-1.5 py-0.5 rounded-md font-mono text-xs border border-indigo-800/50"
                             {...props}
@@ -135,17 +151,9 @@ const LeetAIModal = ({ isOpen, onClose, isLoading, feedback }) => {
                             {children}
                           </code>
                         ) : (
-                          <div className="my-4 rounded-xl overflow-hidden border border-slate-800 bg-slate-900/90 shadow-lg">
-                            <div className="flex items-center justify-between px-4 py-1.5 bg-slate-800/80 border-b border-slate-700/50 text-[11px] font-mono text-slate-400">
-                              <span className="flex items-center gap-1.5">
-                                <Code2 className="w-3.5 h-3.5 text-indigo-400" />
-                                Code / Pseudocode
-                              </span>
-                            </div>
-                            <pre className="p-4 text-xs font-mono text-emerald-300 overflow-x-auto leading-relaxed">
-                              <code {...props}>{children}</code>
-                            </pre>
-                          </div>
+                          <code className={className} {...props}>
+                            {children}
+                          </code>
                         );
                       },
                       table: ({ node, ...props }) => (

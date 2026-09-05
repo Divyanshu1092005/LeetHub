@@ -219,13 +219,18 @@ const ProblemPage = () => {
   };
 
   const handleAskAI = async () => {
+    if (!code || !code.trim()) {
+      toast.error("Please write or select code first before asking AI for feedback.");
+      return;
+    }
+
     setIsAIModalOpen(true);
     setIsAILoading(true);
     try {
       const isSuccessful = submission?.status === "Accepted";
       const res = await axiosInstance.post("/ai/analyze", {
-        problemTitle: problem.title,
-        problemDescription: problem.description,
+        problemTitle: problem?.title || "Problem",
+        problemDescription: problem?.description || "Problem description",
         userCode: code,
         isSuccessful,
       });
@@ -237,9 +242,11 @@ const ProblemPage = () => {
       }
     } catch (error) {
       console.error("Error asking AI for feedback:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to fetch AI feedback. Try again."
-      );
+      const errMsg =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Failed to fetch AI feedback. Try again.";
+      toast.error(errMsg);
     } finally {
       setIsAILoading(false);
     }

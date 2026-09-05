@@ -1,4 +1,8 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from "@google/generative-ai";
 
 export const analyzeCodeSubmission = async (req, res) => {
   try {
@@ -33,7 +37,30 @@ export const analyzeCodeSubmission = async (req, res) => {
     const submissionStatus = typeof isSuccessful === "boolean" ? isSuccessful : false;
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+
+    const safetySettings = [
+      {
+        category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+      {
+        category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold: HarmBlockThreshold.BLOCK_NONE,
+      },
+    ];
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-3.6-flash",
+      safetySettings,
+    });
 
     const prompt = `
 You are a senior software engineering interviewer at a top tech company conducting a friendly mock interview.
@@ -75,8 +102,30 @@ Present the algorithmic solutions clearly:
 Share crucial interview tips, common pitfalls/mistakes candidates make for this specific question, and standard follow-up questions interviewer might ask.
 `;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+    let responseText = "";
+    try {
+      const result = await model.generateContent(prompt);
+      responseText = result?.response?.text?.() || "";
+      if (!responseText && result?.response?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        responseText = result.response.candidates[0].content.parts[0].text;
+      }
+    } catch (genError) {
+      console.warn("Primary model generation issue, trying fallback:", genError.message);
+      // Fallback model attempt if primary encountered issue
+      const fallbackModel = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash",
+        safetySettings,
+      });
+      const fallbackResult = await fallbackModel.generateContent(prompt);
+      responseText = fallbackResult?.response?.text?.() || "";
+    }
+
+    if (!responseText) {
+      return res.status(502).json({
+        success: false,
+        message: "AI service returned an empty response. Please try again.",
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -84,9 +133,12 @@ Share crucial interview tips, common pitfalls/mistakes candidates make for this 
     });
   } catch (error) {
     console.error("AI Code Analysis Error:", error);
-    return res.status(500).json({
+    const statusCode = error.status || (error.message?.includes("429") ? 429 : 500);
+    return res.status(statusCode).json({
       success: false,
-      message: "Failed to generate AI feedback. Please try again later.",
+      message: error.message?.includes("429")
+        ? "AI service is busy or rate limit reached. Please wait a moment and try again."
+        : "Failed to generate AI feedback. Please try again later.",
       error: error.message,
     });
   }
